@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<latex>% This is a sample LaTeX input file.  (Version of 12 August 2004.)
+%<!--
+% A '%' character causes TeX to ignore all remaining text on the line,--><!--
+% and is used for comments like this one.-->
+
+<command name="documentclass"><param>article</param></command>     <!-- % Specifies the document class-->
+
+                            <!-- % The preamble begins here.-->
+<command name="title"><param>An Example Document</param></command> <!-- % Declares the document's title.-->
+<command name="author"><param>Leslie Lamport</param></command>     <!-- % Declares the author's name.-->
+<command name="date"><param>January 21, 1994</param></command>     <!-- % Deleting this command produces today's date.-->
+
+<command name="newcommand"><param><command name="ip"/></param><param type="opt">2</param><param>(#1, #2)</param></command>
+                            <!-- % Defines \ip{arg1}{arg2} to mean-->
+                            <!-- % (arg1, arg2).-->
+<!--
+%\newcommand{\ip}[2]{\langle #1 | #2\rangle}-->
+                            <!-- % This is an alternative definition of-->
+                            <!-- % \ip that is commented out.-->
+
+<environment name="document">            
+
+<command name="maketitle"/>                  
+
+This is an example input file.  Comparing it with
+the output it generates can show you how to
+produce a simple document of your own.
+
+<command name="section"><param>Ordinary Text</param>     
+                            
+                            
+
+The ends  of words and sentences are marked 
+  by   spaces. It  doesn't matter how many 
+spaces    you type; one is as good as 100.  The
+end of   a line counts as a space.
+
+One   or more   blank lines denote the  end 
+of  a paragraph.  
+
+Since any number of consecutive spaces are treated
+like a single one, the formatting of the input
+file makes no difference to
+      <command name="LaTeX"/>,               
+but it makes a difference to you.  When you use
+<command name="LaTeX"/>, making your input file as easy to read 
+as possible will be a great help as you write 
+your document and when you change it.  This sample 
+file shows how you can add comments to your own input 
+file.
+
+Because printing is different from typewriting,
+there are a number of things that you have to do
+differently when preparing an input file than if
+you were just typing the document directly.
+Quotation marks like
+       ``this'' 
+have to be handled specially, as do quotes within
+quotes:
+       ``\,`this'           
+        is what I just 
+        wrote, not  `that'\,''.  
+
+Dashes come in three sizes: an 
+       intra-word 
+dash, a medium dash for number ranges like 
+       1--2, 
+and a punctuation 
+       dash---like 
+this.
+
+A sentence-ending space should be larger than the
+space between words within a sentence.  You
+sometimes have to type special commands in
+conjunction with punctuation characters to get
+this right, as in the following sentence.
+       Gnats, gnus, etc.<command name=" "/>all 
+       begin with G\@.        
+You should check the spaces after periods when
+reading your output to make sure you haven't
+forgotten any special cases.  Generating an
+ellipsis
+       <command name="ldots"/><command name=" "/>             
+                            
+                            
+                             %
+                            
+                            
+                            
+                             %
+with the right spacing around the periods requires
+a special command.
+
+<command name="LaTeX"/><command name=" "/>interprets some common characters as
+commands, so you must type special commands to
+generate them.  These characters include the
+following:
+       \$ \&amp; \% \# \{ and \}.
+
+In printing, text is usually emphasized with an
+       <command name="emph"><param>italic</param></command>  
+type style.  
+
+<environment name="em">
+   A long segment of text can also be emphasized 
+   in this way.  Text within such a segment can be 
+   given <command name="emph"><param>additional</param></command> emphasis.
+</environment>
+
+It is sometimes necessary to prevent <command name="LaTeX"/><command name=" "/>from
+breaking a line where it might otherwise do so.
+This may be at a space, as between the ``Mr.''<command name=" "/>and
+``Jones'' in
+       ``Mr.~Jones'',       
+or within a word---especially when the word is a
+symbol like
+       <command name="mbox"><param><command name="emph"><param>itemnum</param></command></param></command> 
+that makes little sense when hyphenated across
+lines.
+
+Footnotes<command name="footnote"><param>This is an example of a footnote.</param></command>
+pose no problem.
+
+<command name="LaTeX"/><command name=" "/>is good at typesetting mathematical formulas
+like
+       <mathmode style="inline" type="parenthesis"> x-3y + z = 7 </mathmode> 
+or
+       <mathmode style="inline" type="parenthesis"> a_{1} &gt; x^{2n} + y^{2n} &gt; x' </mathmode>
+or  
+       <mathmode style="inline" type="parenthesis"> \ip{A}{B} = \sum_{i} a_{i} b_{i} </mathmode>.
+The spaces you type in a formula are 
+ignored.  Remember that a letter like
+       <mathmode style="inline" type="dollar">x</mathmode>                  
+is a formula when it denotes a mathematical
+symbol, and it should be typed as one.
+
+</command><command name="section"><param>Displayed Text</param>
+
+Text is displayed by indenting it from the left
+margin.  Quotations are commonly displayed.  There
+are short quotations
+<environment name="quote">
+   This is a short quotation.  It consists of a 
+   single paragraph of text.  See how it is formatted.
+</environment>
+and longer ones.
+<environment name="quotation">
+   This is a longer quotation.  It consists of two
+   paragraphs of text, neither of which are
+   particularly interesting.
+
+   This is the second paragraph of the quotation.  It
+   is just as dull as the first paragraph.
+</environment>
+Another frequently-displayed structure is a list.
+The following is an example of an <command name="emph"><param>itemized</param></command>
+list.
+<environment name="itemize">
+   <command name="item"> This is the first item of an itemized list.
+         Each item in the list is marked with a ``tick''.
+         You don't have to worry about what kind of tick
+         mark is used.
+
+   </command><command name="item"> This is the second item of the list.  It
+         contains another list nested inside it.  The inner
+         list is an <command name="emph"><param>enumerated</param></command> list.
+         <environment name="enumerate">
+            <command name="item"/> This is the first item of an enumerated 
+                  list that is nested within the itemized list.
+
+            <command name="item"/> This is the second item of the inner list.  
+                  <command name="LaTeX"/><command name=" "/>allows you to nest lists deeper than 
+                  you really should.
+         </environment>
+         This is the rest of the second item of the outer
+         list.  It is no more interesting than any other
+         part of the item.
+   </command><command name="item"> This is the third item of the list.
+</command></environment>
+You can even display poetry.
+<environment name="verse">
+   There is an environment 
+    for verse \<command name=" "/>           
+   Whose features some poets
+   will curse.   
+
+                            
+
+   For instead of making\\
+   Them do <command name="emph"><param>all</param></command> line breaking, \\
+   It allows them to put too many words on a line when they'd rather be 
+   forced to be terse.
+</environment>
+
+Mathematical formulas may also be displayed.  A
+displayed formula 
+is 
+one-line long; multiline
+formulas require special formatting instructions.
+   <mathmode style="display" type="parenthesis">  \ip{\Gamma}{\psi'} = x'' + y^{2} + z_{i}^{n}</mathmode>
+Don't start a paragraph with a displayed equation,
+nor make one a paragraph by itself.
+
+</command></environment>              <!-- % End of document.-->
+</latex>
