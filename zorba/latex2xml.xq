@@ -246,7 +246,7 @@ for $node in $node/node()
         typeswitch($node)
             case text() return 
                 (
-                   let $node := fn:replace($node,'([^\\][%]+(.+))$','<comment>$1</comment>','m')
+                   let $node := fn:replace($node,'([^\\][%]+(.*))$','<comment>$1</comment>','m')
                    let $node := parse-xml(concat('<text>',$node,'</text>'))
                    let $node := $node/text/node()
                    return $node
@@ -319,13 +319,13 @@ declare function local:transform0_5($node0 as node()) as item()* {
 
 if($node0 instance of element() and string($node0/data(@name))!='tabular' and string($node0/data(@name))!='verbatim' and string($node0/data(@name))!='equation') then
 (
- let $node := local:fold($node0, 'environment','env')
+ let $node := local:fold($node0, 'environment','e')
  let $node := local:verbatim($node)
  let $node := local:fold($node, 'verb','v')
  let $node := local:dollar($node)
- let $node := local:fold($node, 'mathmode','m')
+ let $node := local:fold($node, 'mathmode','d')
  let $node := local:parenthesismath($node)
- let $node := local:fold($node, 'mathmode','mp')
+ let $node := local:fold($node, 'mathmode','m')
  let $node := local:transform-commands($node)
 
  let $node := local:unfold($node)
@@ -394,7 +394,7 @@ element {node-name($node0)}{$node0/@*,
     return 
          typeswitch($node)
             case text() return 
-                (let $node := replace($node, '__([a-z]+[0-9]+)__', '<hideelement nr="$1"/>')
+                (let $node := replace($node, '__([evdm]+[0-9]+)__', '<hideelement nr="$1"/>')
                    let $node := parse-xml(concat('<element>',$node,'</element>'))
                    return $node/element/node()
                 )
@@ -655,7 +655,8 @@ declare %an:nondeterministic function local:latex2xml($latexpath as xs:string) a
 
 let $latex := file:read-text($latexpath)
 
-let $latex := <latex>{$latex}</latex>
+let $latex := 
+<latex>{concat('&#10;',$latex)}</latex>
 
 let $doc00 := local:transform00($latex)
 let $doc1 := local:transform0_1($doc00)
