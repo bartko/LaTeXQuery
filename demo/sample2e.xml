@@ -1,0 +1,208 @@
+<?xml-stylesheet href="html_view.xsl" type="text/xsl" ?>
+<latex><!-- This is a sample LaTeX input file.  (Version of 12 August 2004.)-->
+<!---->
+<!-- A '%' character causes TeX to ignore all remaining text on the line,-->
+<!-- and is used for comments like this one.-->
+
+<command name="documentclass"><param>article</param></command>      <!-- Specifies the document class-->
+
+                             <!-- The preamble begins here.-->
+<command name="title"><param>An Example Document</param></command>  <!-- Declares the document's title.-->
+<command name="author"><param>Leslie Lamport</param></command>      <!-- Declares the author's name.-->
+<command name="date"><param>January 21, 1994</param></command>      <!-- Deleting this command produces today's date.-->
+
+<command name="newcommand"><param><command name="ip"/></param><param type="opt">2</param><param>(#1, #2)</param></command>
+                             <!-- Defines \ip{arg1}{arg2} to mean-->
+                             <!-- (arg1, arg2).-->
+
+<!--\newcommand{\ip}[2]{\langle #1 | #2\rangle}-->
+                             <!-- This is an alternative definition of-->
+                             <!-- \ip that is commented out.-->
+
+<environment name="document">              <!-- End of preamble and beginning of text.-->
+
+<p><command name="maketitle"/>                   <!-- Produces the title.--></p>
+
+
+<p>This is an example input file.  Comparing it with
+the output it generates can show you how to
+produce a simple document of your own.</p>
+
+<command name="section"><param>Ordinary Text</param>  
+<!-- Produces section heading.  Lower-level-->
+                             <!-- sections are begun with similar -->
+                             <!-- \subsection and \subsubsection commands.-->
+
+<p>The ends  of words and sentences are marked 
+  by   spaces. It  doesn't matter how many 
+spaces    you type; one is as good as 100.  The
+end of   a line counts as a space.</p>
+
+<p>One   or more   blank lines denote the  end 
+of  a paragraph.</p>  
+
+<p>Since any number of consecutive spaces are treated
+like a single one, the formatting of the input
+file makes no difference to
+      <command name="LaTeX"/>,                <!-- The \LaTeX command generates the LaTeX logo.-->
+but it makes a difference to you.  When you use
+<command name="LaTeX"/>, making your input file as easy to read 
+as possible will be a great help as you write 
+your document and when you change it.  This sample 
+file shows how you can add comments to your own input 
+file.</p>
+
+<p>Because printing is different from typewriting,
+there are a number of things that you have to do
+differently when preparing an input file than if
+you were just typing the document directly.
+Quotation marks like
+       ``this'' 
+have to be handled specially, as do quotes within
+quotes:
+       ``<command name=","/>`this'            <!-- \, separates the double and single quote.-->
+        is what I just 
+        wrote, not  `that'<command name=","/>''.</p>  
+
+<p>Dashes come in three sizes: an 
+       intra-word 
+dash, a medium dash for number ranges like 
+       1--2, 
+and a punctuation 
+       dash---like 
+this.</p>
+
+<p>A sentence-ending space should be larger than the
+space between words within a sentence.  You
+sometimes have to type special commands in
+conjunction with punctuation characters to get
+this right, as in the following sentence.
+       Gnats, gnus, etc.<command name=" "/>all  <!-- `\ ' makes an inter-word space.-->
+       begin with G\@.         <!-- \@ marks end-of-sentence punctuation.-->
+You should check the spaces after periods when
+reading your output to make sure you haven't
+forgotten any special cases.  Generating an
+ellipsis
+       <command name="ldots"/><command name=" "/>              <!-- `\ ' is needed after `\ldots' because TeX -->
+                             <!-- ignores spaces after command names like \ldots -->
+                             <!-- made from \ + letters.-->
+                             <!---->
+                             <!-- Note how a `%' character causes TeX to ignore -->
+                             <!-- the end of the input line, so these blank lines -->
+                             <!-- do not start a new paragraph.-->
+                             <!---->
+with the right spacing around the periods requires
+a special command.</p>
+
+<p><command name="LaTeX"/><command name=" "/>interprets some common characters as
+commands, so you must type special commands to
+generate them.  These characters include the
+following:
+       \$ \&amp; \% \# \{ and \}.</p>
+
+<p>In printing, text is usually emphasized with an
+       <command name="emph"><param>italic</param></command>  
+type style.</p>  
+
+<p><environment name="em"> 
+   A long segment of text can also be emphasized 
+   in this way.  Text within such a segment can be 
+   given \emph{additional} emphasis.
+</environment></p>
+
+<p>It is sometimes necessary to prevent <command name="LaTeX"/><command name=" "/>from
+breaking a line where it might otherwise do so.
+This may be at a space, as between the ``Mr.''<command name=" "/>and
+``Jones'' in
+       ``Mr.~Jones'',        <!-- ~ produces an unbreakable interword space.-->
+or within a word---especially when the word is a
+symbol like
+       <command name="mbox"><param><command name="emph"><param>itemnum</param></command></param></command> 
+that makes little sense when hyphenated across
+lines.</p>
+
+<p>Footnotes<command name="footnote"><param>This is an example of a footnote.</param></command>
+pose no problem.</p>
+
+<p><command name="LaTeX"/><command name=" "/>is good at typesetting mathematical formulas
+like
+       <mathmode type="parentheses"> x-3y + z = 7 </mathmode> 
+or
+       <mathmode type="parentheses"> a_{1} &gt; x^{2n} + y^{2n} &gt; x' </mathmode>
+or  
+       <mathmode type="parentheses"> \ip{A}{B} = \sum_{i} a_{i} b_{i} </mathmode>.
+The spaces you type in a formula are 
+ignored.  Remember that a letter like
+       <mathmode type="dollar">x</mathmode>                   <!-- $ ... $  and  \( ... \)  are equivalent-->
+is a formula when it denotes a mathematical
+symbol, and it should be typed as one.</p></command>
+
+<command name="section"><param>Displayed Text</param>
+
+<p>Text is displayed by indenting it from the left
+margin.  Quotations are commonly displayed.  There
+are short quotations
+<environment name="quote"> 
+   This is a short quotation.  It consists of a 
+   single paragraph of text.  See how it is formatted.
+</environment>
+and longer ones.
+<environment name="quotation"> 
+   <p>This is a longer quotation.  It consists of two
+   paragraphs of text, neither of which are
+   particularly interesting.</p>
+
+   <p>This is the second paragraph of the quotation.  It
+   is just as dull as the first paragraph.</p>
+</environment>
+Another frequently-displayed structure is a list.
+The following is an example of an <command name="emph"><param>itemized</param></command>
+list.
+<environment name="itemize"> 
+   <command name="item"> <p>This is the first item of an itemized list.
+         Each item in the list is marked with a ``tick''.
+         You don't have to worry about what kind of tick
+         mark is used.</p></command>
+
+   <command name="item"> <p>This is the second item of the list.  It
+         contains another list nested inside it.  The inner
+         list is an <command name="emph"><param>enumerated</param></command> list.
+         <environment name="enumerate"> 
+            <command name="item"> <p>This is the first item of an enumerated 
+                  list that is nested within the itemized list.</p></command>
+
+            <command name="item"> <p>This is the second item of the inner list.  
+                  <command name="LaTeX"/><command name=" "/>allows you to nest lists deeper than 
+                  you really should.</p></command>
+         </environment>
+         This is the rest of the second item of the outer
+         list.  It is no more interesting than any other
+         part of the item.</p></command>
+   <command name="item"> <p>This is the third item of the list.</p></command>
+</environment>
+You can even display poetry.
+<environment name="verse"> 
+   There is an environment 
+    for verse <command name="\"/>             <!-- The \\ command separates lines-->
+   Whose features some poets <!-- within a stanza.-->
+   will curse.   
+
+                             <!-- One or more blank lines separate stanzas.-->
+
+   For instead of making<command name="\"/>
+   Them do <command name="emph"><param>all</param></command> line breaking, <command name="\"/>
+   It allows them to put too many words on a line when they'd rather be 
+   forced to be terse.
+</environment></p>
+
+<p>Mathematical formulas may also be displayed.  A
+displayed formula 
+is 
+one-line long; multiline
+formulas require special formatting instructions.
+   <mathmode type="brackets">  \ip{\Gamma}{\psi'} = x'' + y^{2} + z_{i}^{n}</mathmode>
+Don't start a paragraph with a displayed equation,
+nor make one a paragraph by itself.</p></command>
+
+</environment>               <!-- End of document.-->
+</latex>

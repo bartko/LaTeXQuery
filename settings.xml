@@ -1,0 +1,132 @@
+<!--
+Settings file for LaTeXQuery project.
+
+Copyright (C) 2014 Bartosz Marciniak
+marciniak.b@gmail.com
+
+-->
+
+
+<settings>
+
+
+
+<sectionsorder>part, chapter, section, subsection, subsubsection,
+paragpraph, subparagraph</sectionsorder>
+
+<!-- 
+List of sections which order corresponds to the tree structure of the document.
+In real LaTeX documents 'subsection' is a child of 'section' and structure: 
+
+\section{Section title}
+\subsection{Subsection title}
+
+is converted to
+
+<command name="section">  <param>Section title</param>
+  <command name="subsection"> <param>Subection title</param>
+  </command>
+</command>
+-->
+
+
+<!-- **************************************************** -->
+
+
+<parsedenvironments>
+document, abstract, figurec, table, itemize, enumerate, table,
+frame, quote, quotation, verse, thebibliography</parsedenvironments>
+
+<!-- 
+List of environments which content will be processed further.  For
+example if 'figure' is in the list then the environment
+
+   \begin{figure}
+     \includegraphics{fig}
+     \caption{text}
+   \end{figure}
+
+will be converted to
+
+   <environment name="figure">
+     <command name="includegraphics"><param>fig</param></command>
+     <command name="caption"><param>text</param></command>
+   </environment>
+
+otherwise the content of figure environmet is untouched:
+
+   <environment name="figure">
+     \includegraphics{fig}
+     \caption{text}
+   </environment>
+
+Generally the environments like verbatim, equation, tabular, tabbing,
+pstricks, etc.  should not be processed because of useless output and
+possible errors.
+-->
+
+<!-- **************************************************** -->
+
+
+<environmentswithpar>
+document,abstract,quotation
+</environmentswithpar>
+
+<!-- 
+Here you can add environmets which content you expect to be divided
+into paragraphs by <p> tags.  For example when 'abstract' is in the
+list then text of abstract environment will be enclosed in <p>'s.
+
+<environment name="abstract">
+  <p>First paragraph.</p>
+
+  <p>Second paragraph.</p>
+</environment>
+
+Please note it works only for those environments that are set as
+parsed in the previous section. 
+-->
+
+<!-- ******************************************************************** -->
+
+
+<commandswithpar>
+part,chapter,section,subsection,subsubsection,paragpraph,subparagraph,item
+</commandswithpar>
+
+<!-- 
+Like above but for LaTeX commands, for example 
+
+<command name="item">
+  <p>First paragraph.</p>
+
+  <p>Second paragraph.</p>
+</command>
+-->
+
+<!-- ********************************************** -->
+
+
+<environmentsnotinpar>
+document,abstract,frame,thebibliography
+</environmentsnotinpar>
+
+<!--
+Environments that are not expected to be surrounded by paragpraphs.
+For example there is no need to place abstract environment into <p>
+tag, opposite to its content.
+-->
+
+<!-- ********************************************* -->
+
+
+<commandsnotinpar>
+part,chapter,section,subsection,subsubsection,paragpraph,subparagraph
+</commandsnotinpar>
+
+<!-- 
+Like above but for LaTeX commands.
+-->
+
+
+</settings>
