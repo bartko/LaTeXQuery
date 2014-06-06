@@ -1404,7 +1404,7 @@ declare function local:concatstrings($node as item()*) as item()* {
 let $indx:=
      for $x at $i in $node
      return
-     if(not($node[$i] instance of element()) and not($node[$i+1] instance of element())) then $i
+     if($i < count($node) and not($node[$i] instance of element()) and not($node[$i+1] instance of element())) then $i
      else ()
      let $indx := if(count($node)=$indx[last()]) then
                subsequence($indx,1,count($indx)-1)
