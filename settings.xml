@@ -34,7 +34,7 @@ is converted to
 
 
 <parsedenvironments>
-document, abstract, figurec, table, itemize, enumerate, table,
+document, abstract, figure, table, itemize, enumerate, table,
 frame, quote, quotation, verse, thebibliography</parsedenvironments>
 
 <!-- 

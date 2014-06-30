@@ -1,4 +1,3 @@
-<?xml-stylesheet href="html_view.xsl" type="text/xsl" ?>
 <latex><!-- This is a sample LaTeX input file.  (Version of 12 August 2004.)-->
 <!---->
 <!-- A '%' character causes TeX to ignore all remaining text on the line,-->
@@ -19,7 +18,7 @@
                              <!-- This is an alternative definition of-->
                              <!-- \ip that is commented out.-->
 
-<environment name="document">              <!-- End of preamble and beginning of text.-->
+<environment name="document">             <!-- End of preamble and beginning of text.-->
 
 <p><command name="maketitle"/>                   <!-- Produces the title.--></p>
 
@@ -98,13 +97,13 @@ a special command.</p>
 commands, so you must type special commands to
 generate them.  These characters include the
 following:
-       \$ \&amp; \% \# \{ and \}.</p>
+       <command name="$"/> <command name="&amp;"/> <command name="%"/> <command name="#"/> <command name="{"/> and <command name="}"/>.</p>
 
 <p>In printing, text is usually emphasized with an
        <command name="emph"><param>italic</param></command>  
 type style.</p>  
 
-<p><environment name="em"> 
+<p><environment name="em">
    A long segment of text can also be emphasized 
    in this way.  Text within such a segment can be 
    given \emph{additional} emphasis.
@@ -142,12 +141,12 @@ symbol, and it should be typed as one.</p></command>
 <p>Text is displayed by indenting it from the left
 margin.  Quotations are commonly displayed.  There
 are short quotations
-<environment name="quote"> 
+<environment name="quote">
    This is a short quotation.  It consists of a 
    single paragraph of text.  See how it is formatted.
 </environment>
 and longer ones.
-<environment name="quotation"> 
+<environment name="quotation">
    <p>This is a longer quotation.  It consists of two
    paragraphs of text, neither of which are
    particularly interesting.</p>
@@ -158,7 +157,7 @@ and longer ones.
 Another frequently-displayed structure is a list.
 The following is an example of an <command name="emph"><param>itemized</param></command>
 list.
-<environment name="itemize"> 
+<environment name="itemize">
    <command name="item"> <p>This is the first item of an itemized list.
          Each item in the list is marked with a ``tick''.
          You don't have to worry about what kind of tick
@@ -167,7 +166,7 @@ list.
    <command name="item"> <p>This is the second item of the list.  It
          contains another list nested inside it.  The inner
          list is an <command name="emph"><param>enumerated</param></command> list.
-         <environment name="enumerate"> 
+         <environment name="enumerate">
             <command name="item"> <p>This is the first item of an enumerated 
                   list that is nested within the itemized list.</p></command>
 
@@ -181,7 +180,7 @@ list.
    <command name="item"> <p>This is the third item of the list.</p></command>
 </environment>
 You can even display poetry.
-<environment name="verse"> 
+<environment name="verse">
    There is an environment 
     for verse <command name="\"/>             <!-- The \\ command separates lines-->
    Whose features some poets <!-- within a stanza.-->

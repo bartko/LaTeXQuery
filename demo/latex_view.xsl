@@ -24,8 +24,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template match="mathmode[@type='brackets']">\[<xsl:apply-templates/>\]</xsl:template>
 
-<xsl:template match="mathmode[@type='brackets']">\[<xsl:apply-templates/>\]</xsl:template>
-
 <xsl:template match="verb">\verb<xsl:value-of select="@delim"/><xsl:apply-templates/><xsl:value-of select="@delim"/></xsl:template>
 
 <xsl:template match="comment()">%<xsl:value-of select="."/></xsl:template>
