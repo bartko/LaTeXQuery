@@ -21,7 +21,7 @@ element {node-name($node)}{$node/@*,
      let $node := fn:replace($node,'\\&amp;','\\-amp-')
      let $node := fn:replace($node,'(&lt;)', '-lt-')
      let $node := fn:replace($node,'(&gt;)', '-gt-')
-     let $node := fn:replace($node,'([^\\]&amp;)','-amp2-')
+     let $node := fn:replace($node,'([^\\])(&amp;)','$1-amp2-')
     return $node
 }
 };
@@ -35,7 +35,9 @@ element {node-name($node0)}{$node0/@*,
     return
          typeswitch($node)
             case text() return
+
                 (
+                let $node := fn:replace($node,'\\-amp-', '\\&amp;' )
                 let $node := fn:replace($node,'-lt-', '&lt;' )
                 let $node := fn:replace($node,'-gt-', '&gt;' )
                 let $node := fn:replace($node,'-amp2-', '&amp;')
@@ -46,6 +48,7 @@ element {node-name($node0)}{$node0/@*,
                 if($node/data(@name)='-amp-') then <command name="&amp;"/>
                 else 
                 local:returnspecchar($node)              
+            
                
             default return local:returnspecchar($node)
 }
