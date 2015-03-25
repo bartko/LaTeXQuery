@@ -1,3 +1,4 @@
+<?xml-stylesheet type="text/xsl" href="html_view.xsl"?>
 <latex><!-- This is a sample LaTeX input file.  (Version of 12 August 2004.)-->
 <!---->
 <!-- A '%' character causes TeX to ignore all remaining text on the line,-->
@@ -20,15 +21,15 @@
 
 <environment name="document">             <!-- End of preamble and beginning of text.-->
 
-<p><command name="maketitle"/>                   <!-- Produces the title.--></p>
+<command name="maketitle"/>                   <!-- Produces the title.-->
 
 
-<p>This is an example input file.  Comparing it with
+This is an example input file.  Comparing it with
 the output it generates can show you how to
-produce a simple document of your own.</p>
+produce a simple document of your own.
 
 <command name="section"><param>Ordinary Text</param>  
-<!-- Produces section heading.  Lower-level-->
+<!-- Produces section heading.  Lower˭level-->
                              <!-- sections are begun with similar -->
                              <!-- \subsection and \subsubsection commands.-->
 
@@ -76,8 +77,8 @@ space between words within a sentence.  You
 sometimes have to type special commands in
 conjunction with punctuation characters to get
 this right, as in the following sentence.
-       Gnats, gnus, etc.<command name=" "/>all  <!-- `\ ' makes an inter-word space.-->
-       begin with G\@.         <!-- \@ marks end-of-sentence punctuation.-->
+       Gnats, gnus, etc.<command name=" "/>all  <!-- `\ ' makes an inter˭word space.-->
+       begin with G\@.         <!-- \@ marks end˭of˭sentence punctuation.-->
 You should check the spaces after periods when
 reading your output to make sure you haven't
 forgotten any special cases.  Generating an
@@ -147,37 +148,37 @@ are short quotations
 </environment>
 and longer ones.
 <environment name="quotation">
-   <p>This is a longer quotation.  It consists of two
+   This is a longer quotation.  It consists of two
    paragraphs of text, neither of which are
-   particularly interesting.</p>
+   particularly interesting.
 
-   <p>This is the second paragraph of the quotation.  It
-   is just as dull as the first paragraph.</p>
+   This is the second paragraph of the quotation.  It
+   is just as dull as the first paragraph.
 </environment>
 Another frequently-displayed structure is a list.
 The following is an example of an <command name="emph"><param>itemized</param></command>
 list.
 <environment name="itemize">
-   <command name="item"> <p>This is the first item of an itemized list.
+   <command name="item">This is the first item of an itemized list.
          Each item in the list is marked with a ``tick''.
          You don't have to worry about what kind of tick
-         mark is used.</p></command>
+         mark is used.</command>
 
-   <command name="item"> <p>This is the second item of the list.  It
+   <command name="item">This is the second item of the list.  It
          contains another list nested inside it.  The inner
          list is an <command name="emph"><param>enumerated</param></command> list.
          <environment name="enumerate">
-            <command name="item"> <p>This is the first item of an enumerated 
-                  list that is nested within the itemized list.</p></command>
+            <command name="item">This is the first item of an enumerated 
+                  list that is nested within the itemized list.</command>
 
-            <command name="item"> <p>This is the second item of the inner list.  
+            <command name="item">This is the second item of the inner list.  
                   <command name="LaTeX"/><command name=" "/>allows you to nest lists deeper than 
-                  you really should.</p></command>
+                  you really should.</command>
          </environment>
          This is the rest of the second item of the outer
          list.  It is no more interesting than any other
-         part of the item.</p></command>
-   <command name="item"> <p>This is the third item of the list.</p></command>
+         part of the item.</command>
+   <command name="item">This is the third item of the list.</command>
 </environment>
 You can even display poetry.
 <environment name="verse">

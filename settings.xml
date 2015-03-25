@@ -34,8 +34,8 @@ is converted to
 
 
 <parsedenvironments>
-document, abstract, figure, table, itemize, enumerate, table,
-frame, quote, quotation, verse, thebibliography</parsedenvironments>
+document, abstract, figure, table, itemize, enumerate, description,table,
+frame, quote, quotation, verse, thebibliography, minipage</parsedenvironments>
 
 <!-- 
 List of environments which content will be processed further.  For
@@ -69,7 +69,7 @@ possible errors.
 
 
 <environmentswithpar>
-document,abstract,quotation
+minipage, abstract
 </environmentswithpar>
 
 <!-- 
@@ -91,7 +91,8 @@ parsed in the previous section.
 
 
 <commandswithpar>
-part,chapter,section,subsection,subsubsection,paragpraph,subparagraph,item
+<!--part,chapter,section,subsection,subsubsection,paragpraph,subparagraph,item-->
+section, subsection
 </commandswithpar>
 
 <!-- 
@@ -128,5 +129,10 @@ part,chapter,section,subsection,subsubsection,paragpraph,subparagraph
 Like above but for LaTeX commands.
 -->
 
+
+
+<verbatimenvironments>
+verbatim,luacode
+</verbatimenvironments>
 
 </settings>

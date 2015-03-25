@@ -1,5 +1,5 @@
 (:
-Copyright (C) 2014 Bartosz Marciniak
+Copyright (C) 2015 Bartosz Marciniak
 marciniak.b@gmail.com
 :)
 
@@ -7,10 +7,9 @@ xquery version "3.0";
 
 
 declare function local:parse-xml($string) as node()*{
-  (: util:parse($string) :)
-  fn:parse-xml($string)
+  (: util:parse($string) :) (:exist-db case:)
+  fn:parse-xml($string)     
 };
-
 
 
 
@@ -18,42 +17,45 @@ declare function local:parse-xml($string) as node()*{
 declare function local:transformspecchar($node as element()) as item()* {
     
 element {node-name($node)}{$node/@*,
-     let $node := fn:replace($node,'\\&amp;','\\-amp-')
-     let $node := fn:replace($node,'(&lt;)', '-lt-')
-     let $node := fn:replace($node,'(&gt;)', '-gt-')
-     let $node := fn:replace($node,'([^\\])(&amp;)','$1-amp2-')
+     let $node := fn:replace($node,'\\&amp;','\\&#732;amp&#732;')
+     let $node := fn:replace($node,'(&lt;)', '&#732;lt&#732;')
+     let $node := fn:replace($node,'(&gt;)', '&#732;gt&#732;')
+     let $node := fn:replace($node,'([^\\])(&amp;)','$1&#732;amp2&#732;')
     return $node
 }
 };
 
 
-declare function local:returnspecchar($node0 as node()*) as item()* {
-
-element {node-name($node0)}{$node0/@*,
-
+declare function local:returnspecchar($node0 as node()) as item()* {
+  element {node-name($node0)}{$node0/@*,
     for $node in $node0/node()
     return
          typeswitch($node)
             case text() return
-
                 (
-                let $node := fn:replace($node,'\\-amp-', '\\&amp;' )
-                let $node := fn:replace($node,'-lt-', '&lt;' )
-                let $node := fn:replace($node,'-gt-', '&gt;' )
-                let $node := fn:replace($node,'-amp2-', '&amp;')
-                let $node := fn:replace($node,'_polpauza_','&#8211;&#8211;')
+                let $node := fn:replace($node,'\\&#732;amp&#732;', '\\&amp;' )
+                let $node := fn:replace($node,'&#732;lt&#732;', '&lt;' )
+                let $node := fn:replace($node,'&#732;gt&#732;', '&gt;' )
+                let $node := fn:replace($node,'&#732;amp2&#732;', '&amp;')
                 return $node
                 )
-            case element (command) return  
-                if($node/data(@name)='-amp-') then <command name="&amp;"/>
+            case element() return  
+                if(string(node-name($node))='command' and $node/data(@name)='&#732;amp&#732;') 
+                    then <command name="&amp;"/>
                 else 
                 local:returnspecchar($node)              
             
-               
-            default return local:returnspecchar($node)
+            case comment() return
+                comment{
+                let $node := fn:replace($node,'\\&#732;amp&#732;', '\\&amp;' )
+                let $node := fn:replace($node,'&#732;lt&#732;', '&lt;' )
+                let $node := fn:replace($node,'&#732;gt&#732;', '&gt;' )
+                let $node := fn:replace($node,'&#732;amp2&#732;', '&amp;')
+                return $node
+                }
+            default return $node  
 }
 };
-
 (: ------------------------------------------------------------------------ :)
 
 
@@ -69,8 +71,6 @@ for $node in $node/node()
             default return $node
 }
 };
-
-
 
 declare function local:change-first-verb ($node as xs:string?) as item()* {
 
@@ -104,7 +104,6 @@ declare function local:dollar( $node as node() ) as item()* {
                default return $node
     }
 };
-
 
 
 
@@ -149,7 +148,6 @@ $node
 
 
 (: ---------------------------------------------------------------- :)
-
 (: transform comments :)
 declare function local:transformcomments($node as node()) as item()* {
 
@@ -175,25 +173,7 @@ for $node in $node/node()
                 )
           default return $node
 }         
-    return local:changeincomments($node1)
-};
-
-
-(: change forbidden '--' in xml comments to _polpauza_ :)
-declare function local:changeincomments($node as node()) as item()* {
-
-element {node-name($node)}{$node/@*,
-for $node in $node/node()
-    return
-        typeswitch($node)
-            case text() return $node
-            case element (comment) return
-                   
-                    let $node := fn:replace($node,'[-][-]','_polpauza_','m')
-                    return <comment>{$node}</comment>
-            
-            default return $node
-}
+      return $node1
 };
 
 (: ------------------------------------------------------------------------- :)
@@ -223,11 +203,9 @@ for $node in $node/node()
 }
 };
 
+
 (: ---------------------------------------------------------------- :)
-
-
 declare function local:transform-command($node as node()) as item()* {
-
 let $node :=
  try{
    element {node-name($node)}{$node/@*,
@@ -236,9 +214,9 @@ let $node :=
         typeswitch($node)
             case text() return
                 (
-                 let $node := fn:replace($node,'\\(-amp-)','<command name="$1"/>')
+                 let $node := fn:replace($node,'\\(&#732;amp&#732;)','<command name="$1"/>')
                  let $node := fn:replace($node,'\\["]','<command name="dieresis"/>')
-                 let $node := fn:replace($node,"\\([ \\,;:!'`\^%_{}#$~=.,.;:\-])",'<command name="$1"/>')
+                 let $node := fn:replace($node,"\\([ \\,;:!'`\^%_{}#$~=.,.;:\-/])",'<command name="$1"/>')
                  let $node := fn:replace($node,'\\([a-zA-Z0-9]+)([*])','<command name="$1" aster="aster"/>')
                  let $node := fn:replace($node,'\\([a-zA-Z0-9]+)','<command name="$1"/>')
 
@@ -252,9 +230,7 @@ let $node :=
                     $node/node()
                    }
             }
-
 return $node
-
 };
 
 
@@ -338,7 +314,7 @@ return
     }
 };
 
-
+(: --------------------------------------------------------------- :)
 (: functions for converting [] to <param type="opt"> ------ :)
 
 declare function local:index-of-next-bracket( $string as xs:string? )  as item()* {
@@ -421,7 +397,7 @@ return
 
 
 (: ------------------------------------------------------------------------- :)
-
+(: transofrm commands, mathmode, verbatim ... :)
 declare function local:transform_all($node0 as node()) as item()* {
 
 let $parsedenvironments := local:parsedenvironments() 
@@ -470,7 +446,6 @@ return $node
 
 (: --------------------------------------------------------------- :)
 
-
 declare function local:fold2($node as node(), $elementname as xs:string, $sign as xs:string?) as item() {
  
     element {node-name($node)}{$node/@*,
@@ -486,12 +461,12 @@ declare function local:fold2($node as node(), $elementname as xs:string, $sign a
     let $node0 :=
     for $node at $x in $node/node()
         return
-            if($node instance of element() and string(node-name($node))=$elementname) then
+            if($node instance of element() and string(node-name($node))=$elementname) then 
                 string(concat('__', $sign ,'' , $x , '__'))
             else if($node instance of element() and string(node-name($node))='store') then ()
             else $node
             
-    return  local:concatstrings($node0)
+    return local:concatstrings($node0)
  
     }
 };
@@ -588,10 +563,7 @@ declare function local:removestore($node0 as node()) as item()* {
   }
 };
 
-
 (: ---------------------------------------------------------------- :)
-(: ---------------------------------------------------------------- :)
-    
 declare function local:normalizecommands($node0 as node()) as item()* {
 
    let $node := local:normalizecommand($node0, <command/>)
@@ -695,17 +667,13 @@ declare function local:delcat($nodes as node()*) as item()* {
 
 
 (: ---------------------------------------------------------------- :)
-
+(: replacing <comment> node with real comments: <!-- --> -----------:)
 declare function local:commentsreturn($node0 as node()) as item()* {
-
-let $parsedenvironments := local:parsedenvironments() 
 
 let $node:=
 
-if($node0 instance of element() and 
-     (string($node0/data(@name)) = $parsedenvironments  
-       or string(node-name($node0))='latex' or string(node-name($node0))=('p','param','command'))
-     ) then
+if($node0 instance of element() and   not(string($node0/data(@name)) = local:verbatimenvironments() ) )
+  then
 
    ( 
     element {node-name($node0)}{$node0/@*,
@@ -713,7 +681,13 @@ if($node0 instance of element() and
     return
          typeswitch($node)
             case text() return $node
-            case element (comment) return comment {$node/node()}
+            case element (comment) return comment {
+                  let $node := fn:replace($node/node(),'--','&#749;&#749;','m')
+                  let $node := fn:replace($node,'-','&#749;','m')
+                  return 
+                  $node
+                
+              }
             default return local:commentsreturn($node)
     }
    )
@@ -733,9 +707,50 @@ if($node0 instance of element() and
 return $node
 };
 
-(: ----------------------------------------------------------------- :)
 
-(: resotore commands verb nested in anather verb, verbatim or comments :)
+(: ---------------------------------------------------------------- :)
+(:  zamian \label na tag w otoczeniach nieparsowalnycb z wyjatkiem verbatimu :)
+declare function local:labelsinnotparsed($node as node()) as item()* {
+
+
+let $node0:=
+
+  if($node instance of element() and not(string($node/data(@name)) = local:verbatimenvironments() ) 
+     and string(node-name($node)) != 'verb'
+     and string($node/data(@name)) != local:parsedenvironments()
+) 
+  
+  then
+ (
+  element {node-name($node)}{$node/@*,
+  for $node in $node/node()
+     return
+         typeswitch($node)
+            case text() return 
+            
+               if(matches($node,'\\label')) then
+
+                   let $node := fn:replace($node,'\\label(\s*)\{(.*)\}','<command name="label">$1<param>$2</param></command>')
+                   let $node := local:parse-xml(concat('<text>',$node,'</text>'))
+                   let $node := $node/text/node()
+                   return $node
+
+
+               else  $node
+
+            case element() return local:labelsinnotparsed($node) 
+            default return $node 
+  }
+)
+else $node
+
+return $node0
+         
+};
+
+
+(: ----------------------------------------------------------------- :)
+(: replacing <verb> node with \verb!! nested in other verbatims and comments :)
 
 declare function local:verbreturn($node as node()) as item()* {
 element {node-name($node)}{$node/@*,
@@ -745,7 +760,7 @@ element {node-name($node)}{$node/@*,
             case text() return $node
             case element (comment) return local:verb2tex($node)
             case element (environment) return 
-              if($node/data(@name)='verbatim') then
+              if($node/data(@name)=local:verbatimenvironments() ) then
                   local:verb2tex($node)            
               else if(not($node/data(@name)=local:parsedenvironments())) then 
                   local:verb2tex($node)
@@ -772,7 +787,6 @@ element {node-name($node)}{$node/@*,
 };
 
 (: ---------------------------------------------------------------- :)
-    
 declare function local:sectionsreturns($node as node()*) as item()* {
 element {node-name($node)}{$node/@*,
 for $node in $node/node()
@@ -796,31 +810,83 @@ for $node in $node/node()
 }
 };
 
-(: ---------------------------------------------------------------- :)
 
+(: ---------------------------------------------------------------- :)
 
 declare function local:normalizespecial($node0 as node()) as item()* {
 
 (: for docouments that don't have \begin{document} element  :)
 
-if(local-name($node0)='latex' and not(exists($node0/node()[data(@name) = ('document')]))) then
-  let $latex :=
-   <latex>{
-   local:closesections2($node0/node(), local:sectionsorder())
-    }</latex>
- 
-   let $latex:=
-     element {node-name($latex)}{$latex/@*,
-     for $node in $latex/node()
-     return
-         typeswitch($node)
-            case text() return $node
-            case comment() return $node
-            default return
-                 local:normalizespecial($node)           
-     }
+if(local-name($node0)='latex' and not(exists($node0/node()[data(@name) = ('document')]))
+ and not(exists($node0/node()[data(@name) =  local:sectionsorder()]))
+) then
 
-  return $latex
+element {node-name($node0)}{$node0/@*,
+for $node in $node0/node()
+    return
+    
+       typeswitch($node)
+           case text() return $node
+           case comment() return $node
+           case element (environment) 
+                        return 
+                         
+                         if($node/data(@name) = ('itemize','enumerate','description')) then
+                           local:normalizespecial(element {node-name($node)}{$node/@*,
+                                 local:closesections2($node/node(), 'item')
+                                 
+                         })
+                         else if($node/data(@name) = ('thebibliography')) then
+                           local:normalizespecial(element {node-name($node)}{$node/@*,
+                                 local:closesections2($node/node(), 'bibitem')
+                                 
+                         })
+                         
+                        else  local:normalizespecial($node)
+
+                 default return
+                 local:normalizespecial($node)
+}
+
+
+else if(local-name($node0)='latex' and not(exists($node0/node()[data(@name) = ('document')]))
+ and exists($node0/node()[data(@name) =  local:sectionsorder()])
+) then
+
+let $node0 :=<latex>{local:closesections2($node0/node(), local:sectionsorder())}</latex>       
+  
+let $latex:=
+
+element {node-name($node0)}{$node0/@*,
+for $node in $node0/node()
+    return
+    
+       typeswitch($node)
+           case text() return $node
+           case comment() return $node
+           case element (environment) 
+                        return 
+                         
+                         if($node/data(@name) = ('itemize','enumerate','description')) then
+                           local:normalizespecial(element {node-name($node)}{$node/@*,
+                                 local:closesections2($node/node(), 'item')
+                                 
+                         })
+                         
+                         else if($node/data(@name) = ('thebibliography')) then
+                           local:normalizespecial(element {node-name($node)}{$node/@*,
+                                 local:closesections2($node/node(), 'bibitem')
+                                 
+                         })
+                         
+                        else  local:normalizespecial($node)
+
+                 default return
+                 local:normalizespecial($node)
+}
+
+return  $latex
+
 
 else                       
 
@@ -840,7 +906,7 @@ for $node in $node0/node()
                          })
                             
                          
-                         else if($node/data(@name) = ('itemize','enumerate')) then
+                        else if($node/data(@name) = ('itemize','enumerate','description')) then
                            local:normalizespecial(element {node-name($node)}{$node/@*,
                                  local:closesections2($node/node(), 'item')
                                  
@@ -854,9 +920,7 @@ for $node in $node0/node()
                          })
                          
                          
-                        else
-                           $node
-           
+                        else  local:normalizespecial($node)
 
                  default return
                  local:normalizespecial($node)
@@ -935,8 +999,6 @@ return $norm
 (: -------- end of normalize sections ---------------------------------------------------------- :)
 (: --------------------------------------------------------------------------------------------- :) 
 
-
-
 (: normalize element 
 '<A><a>text</a> text  </A>'
 '<A><a>text</a> text</A>  '
@@ -964,12 +1026,8 @@ declare function local:normalize-right($node as node()) as item()*
         }
    
 };
-(: ---------------------------------------------------------------- :)
-
-
 
 (: ---------------------------------------------------------------- :)
-
 declare function local:emptytemp($node as node()) as item() {
 element {node-name($node)}{$node/@*,
     for $node in $node/node()
@@ -985,8 +1043,6 @@ element {node-name($node)}{$node/@*,
 }
 };
 
-
-
 declare function local:emptytempremove($node as node()) as item() {
 element {node-name($node)}{$node/@*,
     for $node in $node/node()
@@ -999,10 +1055,7 @@ element {node-name($node)}{$node/@*,
 };
 
 
-
-
 (: ----------------------------------------------------- :)
-
 declare function local:index-of-match-first 
   ( $arg as xs:string? ,
     $pattern as xs:string )  as xs:integer? {
@@ -1013,10 +1066,7 @@ declare function local:index-of-match-first
  } ;
  
  
-
 (: ----transform environmentst -------------------------------------------- :)
-(: ------------------------------------------------------------------------ :)
- 
  declare function local:index-of-next-env( $string as xs:string?)  as item()* {
      
   if (matches($string,'\\begin\s*\{|\\end\s*\{')) then
@@ -1109,7 +1159,7 @@ declare function local:findclose($doc as xs:string, $startat as xs:integer, $env
 
 
 (: ------------------------------------------------------------------------ :)
-
+(: transform environments :)
 (: this propably can be simplified :)
 declare function local:transformenvironm($node as node()*) as item()* {
 element {node-name($node)}{$node/@*,
@@ -1137,20 +1187,121 @@ element {node-name($node)}{$node/@*,
 }    
 };
 
+(:------------------------------------------------------:)
+(: how many param tag are there in the environmnet :)
+declare function local:posparam($node0 as item()*) as item()* {
+ let $i :=
+ for $node at $i in $node0
+    return 
+    if($node[. instance of element()] and string(node-name($node))='param')
+     then $i
+    else 0
+    
+ let $i := distinct-values($i)
+ let $i := if(count($i)>1) then $i[not(.=0)]
+  else $i   
+    
+    return $i
+    
+};
+
+(: test if <param> is firs element:)
+declare function local:posparam2($node0 as item()*, $pos) as item()* {
+
+ let $i := 
+ for $node in $node0[position()< local:posparam($node0)[$pos]]
+   return
+    if ($node instance of text() and normalize-space($node) = '') then ()
+       else if ($node instance of text() and normalize-space($node) != '') then <i/>
+       else if ($node instance of comment()) then ()
+       else if ($node instance of element(param)) then <i/>
+   else ()
+ 
+   let $i := count($i)+1
+   return $i
+};
 
 
 
+declare function local:envparam($node as node()) as item()* {
+
+let $node0:=
+  if($node instance of element() and string(node-name($node)) = 'environment') then 
+    (
+     element {node-name($node)}{$node/@*,
+      
+       if (local:posparam($node/node())>0  ) then
+          ( 
+          
+              if (local:posparam2($node/node(),2) = 2  ) then
+                ($node/node()[position()< local:posparam($node/node())[1]],
+                <envparams>{$node/node()[position() >= local:posparam($node/node())[1] 
+                                  and position()<= local:posparam($node/node())[2]]}</envparams>,
+                $node/node()[position() > local:posparam($node/node())[2]]
+                )     
+
+             else if (local:posparam2($node/node(),1) = 1 and local:posparam2($node/node(),2) != 2) then
+                ($node/node()[position()< local:posparam($node/node())[1]],
+                <envparams>{$node/node()[position() >= local:posparam($node/node())[1] 
+                                  and position()<= local:posparam($node/node())[1]]}</envparams>,
+                $node/node()[position() > local:posparam($node/node())[1]]
+                ) 
+
+            else $node/node()
+            
+          )
+       else
+          $node/node()
+     
+      }
+      
+     )
+  else $node
+return local:envparamall($node0)
+};
+
+
+
+
+
+declare function local:envparamall($node as node()) as item()* {
+
+  element {node-name($node)}{$node/@*,
+       for $node in $node/node()
+       return
+         typeswitch($node)
+            case text() return $node
+            case element() 
+              return
+              if($node instance of element() and string(node-name($node))='environment' and 
+                      not(string($node/data(@name)) = local:verbatimenvironments()) 
+                  and string($node/data(@name)) = local:parsedenvironments()
+                )  
+                then local:envparam($node)
+              
+              else $node
+            
+            
+            
+            default return $node
+        }
+         
+};
+
+
+
+(: ------------------------------------------------------------------ :)
 declare function local:splittexttoparagraphs($node as xs:string?) as item()* {
 
 if(normalize-space($node)!='') then 
   
-  let $beginp := local:index-of-match-first($node,'[a-zA-Z0-9_]') 
+let $beginp := local:index-of-match-first($node,'[^\s]') 
 
   let $withoutwhiteatbegin:= substring($node,$beginp)    
 
   let $endp := 
-    if(local:index-of-match-first($withoutwhiteatbegin,'\s*\n\s*\n\s*([a-zA-Z0-9_]+)\s*') !=0 ) then
-         local:index-of-match-first($withoutwhiteatbegin,'\s*\n\s*\n\s*([a-zA-Z0-9_]+)\s*')
+    if(local:index-of-match-first($withoutwhiteatbegin,'\s*\n\s*\n\s*([^\s]+)\s*') !=0 ) then     
+         local:index-of-match-first($withoutwhiteatbegin,'\s*\n\s*\n\s*([^\s]+)\s*')
     else if (local:index-of-match-first($withoutwhiteatbegin,'(\s+)$')!=0 ) then
          local:index-of-match-first($withoutwhiteatbegin,'(\s+)$')
     else string-length($withoutwhiteatbegin) +1
@@ -1165,14 +1316,18 @@ if(normalize-space($node)!='') then
 else $node   
 };           
 
+(: this strange reg-extp can be changed to conditional using count(tokenize,\n)) :)
 
+
+(:--------------------------------------------------------------------------:)
+(: split texts into paragraphs  <p> :)
 
 declare function local:textintopar($node0 as node()) as item()* {
 
-(: intersection - <p> only in parsed environments :)
+                                            (: intersection  :)
 let $enironmentswithpar := distinct-values(local:parsedenvironments()[.=local:environmentswithpar()])
 
-let $commandswitypar :=  local:commandswithpar()
+let $commandswithpar :=  local:commandswithpar()
 
 let $node := $node0
 
@@ -1187,7 +1342,7 @@ let $node :=
                    if( 
                      (string(node-name($node))='environment' and $node/data(@name)=$enironmentswithpar)
                       or    
-                     (string(node-name($node))='command' and $node/data(@name)=$commandswitypar  )
+                     (string(node-name($node))='command' and $node/data(@name)=$commandswithpar  )
                      )
                      then
                       
@@ -1216,7 +1371,6 @@ let $node :=
                           let $node := local:unfold($node,$node,'verb')
                           let $node := local:unfold($node,$node,'env')
                           let $node := local:unfold($node,$node,'comd') 
-
                       
                           let $node := local:removestore($node)
                        
@@ -1230,7 +1384,8 @@ let $node :=
 
 };
 
-
+(:-------------------------------------------------------------------------------:)
+(: remove <p> from around comments :)
 declare function local:removepar($node as node(), $nodename as xs:string) as item()* {
 
   element {node-name($node)}{$node/@*,
@@ -1301,6 +1456,11 @@ declare function local:ifcontainselementandother($node as node(), $nodename as x
 :)
 
 
+(: ------------------------------------------------------------- :)
+(: Corrections at sections, expressions like
+   <command name="section"> <p><param>First chapter</param> 
+   chnges to 
+   <command name="section"> <param>First chapter</param><p> :)
 
 declare function local:correctpar($node0 as node()) as item()* {
 
@@ -1438,33 +1598,131 @@ declare function local:normalizep($tail as node()) as item()* {
 
 (: (<d/>,"mm","dd",<m/>,"mm","dd") change to (<d/>,"mmdd",<m/>,"mmdd") :)
 declare function local:concatstrings($node as item()*) as item()* {
-let $indx:=
+  
+  let $b:=    
      for $x at $i in $node
      return
-     if($i < count($node) and not($node[$i] instance of element()) and not($node[$i+1] instance of element())) then $i
-     else ()
-     let $indx := if(count($node)=$indx[last()]) then
-               subsequence($indx,1,count($indx)-1)
-               else $indx
+      if(not($node[$i] instance of element())) then $i
+     else 0
+     
+     let $b:= if( $b!=0 ) then $b[not(.=0)][1]
+            else  $b[1]
 
-      
-     let $ind := if(count($indx)>0) then $indx[1]
-                 else 0
-     
+
+   let $e :=    
+   for $x at $i in $node
+      return
+      if($i<count($node) and $i>=$b and not($node[$i] instance of element())  and $node[$i + 1] instance of element() ) then $i
+else  if($i=count($node) and $i>=$b and not($node[$i] instance of element())   ) then $i
+      else 0
+     let $e:= if( $e!=0 ) then $e[not(.=0)][1]
+            else  $e[1]
+  
+    
 let $node:=
-     
-      if($ind = 0)then
-         $node
+   
+      if($b = 0) then $node
       else 
-       ($node[position()<$ind]
+       ($node[position()<$b]
        ,
-        local:concatstrings((concat( $node[position()=$ind], $node[position()= $ind +1]),
-        let $tail := $node[position()> $ind +1]
-        return $tail))
+         string-join(
+               for $i in $node[position()>=$b and position()<=$e] 
+               return $i 
+         ) 
+        ,
+        let $tail := $node[position() > $e and position() <= count($node)]
+        
+        let $tail := if (count($tail)!=0) then local:concatstrings($tail)
+        else ()
+        
+        return $tail
+          
       )
-      
    return $node
+   
 };
+
+
+
+
+(:
+'\item text' produces <command name="item"> text</command> 
+this function remove space from beginning 
+<command name="item">text</command> 
+:)
+
+declare function local:correctitemspace($node0 as node()) as item()* {
+
+    element {node-name($node0)}{$node0/@*,
+    for $node in $node0/node()
+    return
+         typeswitch($node)
+            case text() return $node
+            case element() return 
+           
+               if( string(node-name($node)) = 'environment' and string($node/data(@name)) = ('itemize','enumerate','description')) then 
+
+                  element {node-name($node)}{$node/@*,
+                        for $node in $node/node()
+                        return typeswitch($node)
+                               case element() return 
+                               if( string(node-name($node)) = 'command' and string($node/data(@name)) = 'item') then 
+                               
+                                    local:correctitemspace( 
+                                        local:correctitemspace2($node)
+                                     )
+                               
+                               else $node
+                                
+                               default return $node
+                  }
+               
+               else local:correctitemspace($node)
+            
+            case comment () return $node      
+            default return local:correctitemspace($node)
+    }
+};
+
+
+
+declare function local:correctitemspace2($node0 as node()) as item()* {
+
+(:
+body of this function was copied from local:correctparinitemize()
+:)
+ element {node-name($node0)}{$node0/@*,
+
+    let $firstnodeemptytext :=
+     if($node0/node()[1] instance of text() and normalize-space($node0/node()[1])='') then true()
+     else false()
+
+   let $parampos:=
+   subsequence(for $node at $i in $node0/node()
+   return
+    if(local-name($node)='param' and $node/data(@type)='opt') then
+               $i
+            else (),1,1)
+         
+    let $parampos2 :=
+     if($parampos = 2 and $firstnodeemptytext) then $parampos
+     else if ($parampos = 1) then $parampos
+     else 0
+
+   let $node :=  
+   ( $node0/node()[position()<= $parampos2],
+     (if ($node0/node()[$parampos2 +1] instance of text() and 
+          substring($node0/node()[$parampos2 +1],1,1)=' ' ) then 
+                substring($node0/node()[$parampos2 +1],2)
+      else  $node0/node()[$parampos2 +1]),
+    $node0/node()[position()> $parampos2 +1 ]
+   )
+   
+   return $node
+
+}
+};
+
 
 
 
@@ -1475,42 +1733,50 @@ declare function local:settingsdoc() as item() {
 };
 
 declare function local:sectionsorder() as item()* {
-   let $tokens := tokenize(local:settingsdoc()//sectionsorder/node(),',')
+   let $tokens := tokenize(local:settingsdoc()//sectionsorder,',')
    return 
       for $token in $tokens
         return normalize-space($token)
 };
 
 declare function local:parsedenvironments() as item()* {
-    let $tokens := tokenize(local:settingsdoc()//parsedenvironments/node(),',')
+    let $tokens := tokenize(local:settingsdoc()//parsedenvironments,',')
     return 
        for $token in $tokens
        return normalize-space($token)
 };
 
 declare function local:environmentswithpar() as item()* {
-    let $tokens := tokenize(local:settingsdoc()//environmentswithpar/node(),',')
+    let $tokens := tokenize(local:settingsdoc()//environmentswithpar,',')
     return 
         for $token in $tokens
         return normalize-space($token)
 };
 
 declare function local:commandswithpar() as item()* {
-   let $tokens := tokenize(local:settingsdoc()//commandswithpar/node(),',')
+   let $tokens := tokenize(local:settingsdoc()//commandswithpar,',')
    return 
        for $token in $tokens
        return normalize-space($token)
 };
 
 declare function local:environmentsnotinpar() as item()* {
-    let $tokens := tokenize(local:settingsdoc()//environmentsnotinpar/node(),',')
+    let $tokens := tokenize(local:settingsdoc()//environmentsnotinpar,',')
     return 
         for $token in $tokens
         return normalize-space($token)
 };
 
 declare function local:commandsnotinpar() as item()* {
-    let $tokens := tokenize(local:settingsdoc()//commandsnotinpar/node(),',')
+    let $tokens := tokenize(local:settingsdoc()//commandsnotinpar,',')
+    return 
+        for $token in $tokens
+        return normalize-space($token)
+};
+
+
+declare function local:verbatimenvironments() as item()* {
+    let $tokens := tokenize(local:settingsdoc()//verbatimenvironments,',')
     return 
         for $token in $tokens
         return normalize-space($token)
@@ -1521,25 +1787,26 @@ declare function local:commandsnotinpar() as item()* {
 
 declare function local:latex2xml($latexpath as xs:string) as node()* {
 
+
 let $latex := file:read-binary($latexpath)
 
 let $latex := convert:binary-to-string($latex)
 
 let $latex :=<latex>{$latex}</latex>
 
-let $latex := local:transformspecchar($latex)        (: special chars :)
+let $latex := local:transformspecchar($latex) 
 
-let $latex := local:verbatim($latex)                 (: fold verb :)
+let $latex := local:verbatim($latex)                 
 
 let $latex := local:fold2($latex, 'verb','v')
 
-let $latex := local:transformcomments($latex)        (: transform comments :)
+let $latex := local:transformcomments($latex)      
 
-let $latex := local:fold2($latex, 'comment', 'c')    (: fold comments :)
+let $latex := local:fold2($latex, 'comment', 'c')     
 
-let $latex := local:transformenvironm($latex)        (: transform environments :)
+let $latex := local:transformenvironm($latex)        
 
-let $latex := local:transform_all($latex)            (: transofrm commands, mathmode, verbatim ... :)
+let $latex := local:transform_all($latex)            
 
 let $latex := local:unfold($latex,$latex,'c')
 
@@ -1553,32 +1820,39 @@ let $latex := local:normalizecommands($latex)
 
 let $latex := local:emptytempremove($latex)
 
-let $latex := local:verbreturn($latex)      (: replacing <verb> node with \verb!! nested in other verbatims and comments :)
+let $latex := local:envparamall($latex)
+
+let $latex := local:verbreturn($latex)     
+
 let $latex := local:sectionsreturns($latex)
 
 let $latex := local:normalizespecial($latex)
 
-let $latex := local:textintopar($latex)    (: split texts into paragraphs  <p> :)
+(: place to function moving thebibliography outside the section :)
+
+let $latex := local:correctitemspace($latex) 
+
+let $latex := local:textintopar($latex)    
+
+let $latex := local:correctpar($latex)     
+
+let $latex := local:removepar($latex,'comment')      
+
+let $latex := local:commentsreturn($latex)    
+
+let $latex := local:labelsinnotparsed($latex)
 
 let $latex := local:returnspecchar($latex)
 
-let $latex := local:correctpar($latex)     (: <command name="section"> <p><param>First chapter</param> to 
-                                             <command name="section"> <param>First chapter</param><p> :)
-
-let $latex := local:removepar($latex,'comment')      (: remove <par> from around comments :)
-
-let $latex := local:commentsreturn($latex)    (: replacing <comment> node fith real comments: <!-- -->  :)
-
 return $latex
+
 };
  
 
-let $params := map { "indent" := "no" }
+let $params := map {"method" := "xml", "version" := "1.0", "omit-xml-declaration" := "yes" , "indent" := "no" }
 
 let $xml := local:latex2xml($input-document)
 
-return file:write($output-document, $xml, $params) 
-
-
+return file:write($output-document, $xml, $params)
 
 

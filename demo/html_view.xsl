@@ -161,7 +161,7 @@ white-space: pre-wrap;
  <ol><xsl:apply-templates/></ol>
 </xsl:template>
 
-<xsl:template match="command[@name='item']"><li><xsl:apply-templates select="p"/></li></xsl:template>
+<xsl:template match="command[@name='item']"><li><xsl:apply-templates/></li></xsl:template>
 
 
 <xsl:template match="mathmode[@type='parentheses']">
