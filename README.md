@@ -14,6 +14,7 @@ Installation
 
 *  Dowload BaseX.zip from [basex.org](http://basex.org) and extract it
    to your system directory.
+   **Script works only for 7.3--7.7 version of BaseX.**
 
 *  Edit latex2xml.sh and modify 'basexpath' by adding the location of basex directory.
 
